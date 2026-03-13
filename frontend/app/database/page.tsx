@@ -67,7 +67,7 @@ export default function DatabasePage() {
           <img src="/jonetsu-logo.jpg" alt="情熱カンパニー" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
           <div>
             <div style={{ color: '#ffffff', fontWeight: 'bold', fontSize: 20 }}>
-              農地分析システム
+              情熱AI
             </div>
             <div style={{ color: '#ffffff', fontSize: 12, opacity: 0.8, marginTop: 2 }}>
               写真から農地情報を自動抽出・データベース化
