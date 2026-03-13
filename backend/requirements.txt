@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+anthropic
+tenacity
+openpyxl
+python-multipart
+aiofiles

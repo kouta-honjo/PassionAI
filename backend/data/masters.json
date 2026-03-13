@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "description": "野菜ごとの栽培適性条件マスタ",
+  "crops": [
+    {
+      "name": "大根",
+      "name_en": "daikon",
+      "suitable_soil_types": ["loam", "sandy_loam", "sandy"],
+      "max_abandonment_level": 3,
+      "required_drainage": "good",
+      "slope_tolerance": "gentle",
+      "notes": "深く柔らかい土壌が最適。石礫が多いと又根になる。pH 6.0-7.0が理想。"
+    },
+    {
+      "name": "にんじん",
+      "name_en": "carrot",
+      "suitable_soil_types": ["sandy_loam", "loam"],
+      "max_abandonment_level": 3,
+      "required_drainage": "good",
+      "slope_tolerance": "gentle",
+      "notes": "深くて石礫の少ない土壌が必要。排水不良では根腐れが発生する。pH 6.0-7.0。"
+    },
+    {
+      "name": "じゃがいも",
+      "name_en": "potato",
+      "suitable_soil_types": ["loam", "sandy_loam", "clay_loam"],
+      "max_abandonment_level": 4,
+      "required_drainage": "moderate",
+      "slope_tolerance": "moderate",
+      "notes": "比較的荒れた土地でも栽培可能。pH 5.0-6.0の弱酸性土壌を好む。連作障害に注意。"
+    },
+    {
+      "name": "キャベツ",
+      "name_en": "cabbage",
+      "suitable_soil_types": ["clay_loam", "loam", "sandy_loam"],
+      "max_abandonment_level": 3,
+      "required_drainage": "moderate",
+      "slope_tolerance": "gentle",
+      "notes": "保水性・保肥性のある土壌を好む。pH 6.0-7.0。冷涼な気候に適する。"
+    },
+    {
+      "name": "ほうれん草",
+      "name_en": "spinach",
+      "suitable_soil_types": ["loam", "clay_loam"],
+      "max_abandonment_level": 2,
+      "required_drainage": "good",
+      "slope_tolerance": "gentle",
+      "notes": "酸性土壌に弱い。pH 6.5-7.0が必要。土壌改良が必要な場合が多い。"
+    },
+    {
+      "name": "玉ねぎ",
+      "name_en": "onion",
+      "suitable_soil_types": ["loam", "sandy_loam", "clay_loam"],
+      "max_abandonment_level": 3,
+      "required_drainage": "good",
+      "slope_tolerance": "gentle",
+      "notes": "水はけのよい肥沃な土壌を好む。pH 6.0-7.0。比較的栽培しやすい。"
+    },
+    {
+      "name": "トマト",
+      "name_en": "tomato",
+      "suitable_soil_types": ["loam", "sandy_loam"],
+      "max_abandonment_level": 2,
+      "required_drainage": "good",
+      "slope_tolerance": "moderate",
+      "notes": "水はけのよい肥沃な土壌が必要。pH 6.0-6.5。乾燥気味での管理が実の品質を高める。"
+    },
+    {
+      "name": "なす",
+      "name_en": "eggplant",
+      "suitable_soil_types": ["loam", "clay_loam"],
+      "max_abandonment_level": 2,
+      "required_drainage": "moderate",
+      "slope_tolerance": "gentle",
+      "notes": "保水性・保肥性のある土壌が最適。pH 6.0-6.5。水分を多く必要とする。"
+    },
+    {
+      "name": "ピーマン",
+      "name_en": "bell_pepper",
+      "suitable_soil_types": ["loam", "sandy_loam"],
+      "max_abandonment_level": 2,
+      "required_drainage": "good",
+      "slope_tolerance": "gentle",
+      "notes": "水はけがよく肥沃な土壌を好む。pH 6.0-6.5。高温乾燥に比較的強い。"
+    },
+    {
+      "name": "さつまいも",
+      "name_en": "sweet_potato",
+      "suitable_soil_types": ["sandy", "sandy_loam", "loam"],
+      "max_abandonment_level": 5,
+      "required_drainage": "good",
+      "slope_tolerance": "steep",
+      "notes": "痩せた土地や傾斜地でも栽培可能。荒廃地での先駆け作物として最適。pH 5.5-6.5。過肥沃地では蔓ぼけに注意。"
+    }
+  ],
+  "soil_type_labels": {
+    "clay": "粘土質",
+    "clay_loam": "粘土質ローム",
+    "loam": "ローム（壌土）",
+    "sandy_loam": "砂質ローム",
+    "sandy": "砂質"
+  },
+  "drainage_labels": {
+    "good": "良好",
+    "moderate": "普通",
+    "poor": "不良"
+  },
+  "slope_tolerance_labels": {
+    "gentle": "緩傾斜まで",
+    "moderate": "中傾斜まで",
+    "steep": "急傾斜も可"
+  }
+}
