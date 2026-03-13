@@ -62,7 +62,7 @@ export default function DatabasePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f3f4f6' }}>
       {/* Header */}
-      <header style={{ background: '#15803d', padding: '12px 20px' }}>
+      <header style={{ background: '#ea580c', padding: '12px 20px' }}>
         <div style={{ maxWidth: 560, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src="/jonetsu-logo.jpg" alt="情熱カンパニー" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
           <div>
@@ -101,8 +101,8 @@ export default function DatabasePage() {
           padding: '12px 0',
           fontSize: 14,
           fontWeight: 'bold',
-          color: '#15803d',
-          borderBottom: '2px solid #15803d',
+          color: '#ea580c',
+          borderBottom: '2px solid #ea580c',
           cursor: 'pointer',
         }}>
           🗂 データベース ({farmlands.length}件)
