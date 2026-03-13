@@ -42,8 +42,8 @@ export default function UploadZone({ images, onImagesChange }: UploadZoneProps) 
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         style={{
-          background: isDragging ? '#dcfce7' : '#f0fdf4',
-          border: '2px dashed #86efac',
+          background: isDragging ? '#fed7aa' : '#fff7ed',
+          border: '2px dashed #fb923c',
           borderRadius: 12,
           padding: '32px 20px',
           textAlign: 'center',
@@ -52,7 +52,7 @@ export default function UploadZone({ images, onImagesChange }: UploadZoneProps) 
         }}
       >
         <div style={{ fontSize: 36 }}>📁</div>
-        <div style={{ color: '#15803d', fontWeight: 'bold', fontSize: 15, marginTop: 8 }}>
+        <div style={{ color: '#ea580c', fontWeight: 'bold', fontSize: 15, marginTop: 8 }}>
           農地の写真をアップロード
         </div>
         <div style={{ color: '#6b7280', fontSize: 12, marginTop: 4 }}>
@@ -80,7 +80,7 @@ export default function UploadZone({ images, onImagesChange }: UploadZoneProps) 
                   height: 60,
                   objectFit: 'cover',
                   borderRadius: 7,
-                  border: '2px solid #86efac',
+                  border: '2px solid #fb923c',
                 }}
               />
               <button
