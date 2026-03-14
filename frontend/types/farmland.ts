@@ -33,14 +33,21 @@ export interface Environment {
 }
 
 export interface AnalysisResult {
-  地形: Terrain;
-  インフラ: Infrastructure;
-  土壌表面: SoilSurface;
-  土地利用履歴: LandHistory;
-  周辺環境: Environment;
+  地形?: Terrain;
+  インフラ?: Infrastructure;
+  土壌表面?: SoilSurface;
+  土地利用履歴?: LandHistory;
+  周辺環境?: Environment;
   適性作物推定: string[];
   注意点: string;
   信頼度: Confidence;
+}
+
+export interface AnalysisEntry {
+  id: string;
+  analyzedAt: string;
+  imageUrls: string[];
+  data: AnalysisResult;
 }
 
 export interface Farmland {
@@ -50,4 +57,5 @@ export interface Farmland {
   imageUrls: string[];
   analyzedAt: string;
   data: AnalysisResult;
+  analyses?: AnalysisEntry[];
 }

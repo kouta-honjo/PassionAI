@@ -71,12 +71,23 @@ export const DEMO_DATA: Farmland[] = [
 ];
 
 export const farmlandApi = {
-  analyze: async (images: File[], name?: string, memo?: string): Promise<Farmland> => {
+  analyze: async (images: File[], name?: string, memo?: string, categories?: string[]): Promise<Farmland> => {
     const formData = new FormData();
     images.forEach(img => formData.append('images', img));
     if (name) formData.append('name', name);
     if (memo) formData.append('memo', memo);
+    if (categories) formData.append('categories', JSON.stringify(categories));
     const res = await axios.post(`${BASE_URL}/api/analyze`, formData, {
+      timeout: 30000,
+    });
+    return res.data;
+  },
+
+  addAnalysis: async (fieldId: string, images: File[], categories?: string[]): Promise<Farmland> => {
+    const formData = new FormData();
+    images.forEach(img => formData.append('images', img));
+    if (categories) formData.append('categories', JSON.stringify(categories));
+    const res = await axios.post(`${BASE_URL}/api/farmlands/${fieldId}/analyze`, formData, {
       timeout: 30000,
     });
     return res.data;
@@ -129,11 +140,11 @@ export function generateCSV(data: Farmland[]): void {
     const d = f.data;
     return [
       f.name, f.analyzedAt,
-      d.地形.傾斜, d.地形.地形タイプ, d.地形.推定面積 ?? '不明',
-      d.インフラ.道路アクセス, boolStr(d.インフラ.用排水路), boolStr(d.インフラ.電力), d.インフラ.農業機械アクセス,
-      d.土壌表面.土色 ?? '不明', d.土壌表面.表面状態 ?? '不明', d.土壌表面.水分状態推定,
-      d.土地利用履歴.現在の状態, d.土地利用履歴.過去の利用推定, boolStr(d.土地利用履歴.畝立て跡), boolStr(d.土地利用履歴['マルチ等の資材']),
-      d.周辺環境.隣接建物 ?? '不明', boolStr(d.周辺環境['森林・林地の近接']), d.周辺環境.日照条件推定,
+      d.地形?.傾斜 ?? '不明', d.地形?.地形タイプ ?? '不明', d.地形?.推定面積 ?? '不明',
+      d.インフラ?.道路アクセス ?? '不明', boolStr(d.インフラ?.用排水路 ?? null), boolStr(d.インフラ?.電力 ?? null), d.インフラ?.農業機械アクセス ?? '不明',
+      d.土壌表面?.土色 ?? '不明', d.土壌表面?.表面状態 ?? '不明', d.土壌表面?.水分状態推定 ?? '不明',
+      d.土地利用履歴?.現在の状態 ?? '不明', d.土地利用履歴?.過去の利用推定 ?? '不明', boolStr(d.土地利用履歴?.畝立て跡 ?? null), boolStr(d.土地利用履歴?.['マルチ等の資材'] ?? null),
+      d.周辺環境?.隣接建物 ?? '不明', boolStr(d.周辺環境?.['森林・林地の近接'] ?? null), d.周辺環境?.日照条件推定 ?? '不明',
       d.適性作物推定[0] ?? '', d.適性作物推定[1] ?? '', d.適性作物推定[2] ?? '',
       d.注意点, d.信頼度
     ].map(v => escape(String(v)));

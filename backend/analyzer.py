@@ -25,11 +25,15 @@ logger = logging.getLogger(__name__)
 
 MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5")
 
-SYSTEM_PROMPT = """あなたは農業・土壌科学の専門家です。
-圃場の写真を分析し、以下の情報を正確に抽出してください。
+BASE_SYSTEM_PROMPT = """あなたは農業・土壌科学の専門家です。
 
-必ず以下のJSONスキーマに従って回答してください（余分なテキストなし）:
-{
+まず、写真が圃場（農地・畑・水田・耕作放棄地）の写真かどうかを判定してください。
+圃場でない場合（室内、街中、海、建物のみなど）は以下のJSONを返してください:
+{{"is_farmland": false, "rejection_reason": "理由を簡潔に説明"}}
+
+圃場の写真である場合、以下のJSONスキーマに従って回答してください（余分なテキストなし）:
+{{
+  "is_farmland": true,
   "soil_type": "loam|clay|sandy|silt|unknown のいずれか",
   "soil_color": "dark_brown|brown|red|gray|unknown のいずれか",
   "vegetation": ["検出された植生のリスト（日本語）"],
@@ -39,7 +43,7 @@ SYSTEM_PROMPT = """あなたは農業・土壌科学の専門家です。
   "stones_present": trueまたはfalse,
   "raw_description": "圃場全体の詳細な日本語説明（200字程度）",
   "confidence": 0.0から1.0の浮動小数点（判定の確信度）
-}
+}}
 
 判定基準:
 - soil_type: loam=ローム質（バランス良い）、clay=粘土質（重い）、sandy=砂質（軽い）、silt=シルト質
@@ -47,6 +51,37 @@ SYSTEM_PROMPT = """あなたは農業・土壌科学の専門家です。
 - drainage_estimate: 地形・土壌・植生から排水性を推定
 - confidence: 写真の品質・情報量から総合的な確信度を設定
 """
+
+# Backward-compatible alias
+SYSTEM_PROMPT = BASE_SYSTEM_PROMPT
+
+
+def _build_system_prompt(categories: list[str] | None = None) -> str:
+    """Build system prompt, optionally filtering to specific categories."""
+    if not categories:
+        return BASE_SYSTEM_PROMPT
+
+    # Map frontend category names to prompt field instructions
+    category_fields = {
+        "地形": '"slope": "flat|gentle|moderate|steep のいずれか"',
+        "インフラ": '(インフラ情報はraw_descriptionに含めてください)',
+        "土壌表面": '"soil_type", "soil_color", "stones_present"',
+        "土地利用履歴": '"abandonment_level", "vegetation"',
+        "周辺環境": '(周辺環境情報はraw_descriptionに含めてください)',
+        "適性作物推定": '(栽培適性は別途スコアリングされます)',
+    }
+
+    selected_info = []
+    for cat in categories:
+        if cat in category_fields:
+            selected_info.append(f"- {cat}: {category_fields[cat]}")
+
+    prompt = BASE_SYSTEM_PROMPT
+    if selected_info:
+        prompt += "\n\n重点的に分析するカテゴリ:\n" + "\n".join(selected_info)
+        prompt += "\n\n上記カテゴリを重点的に分析してください。他のフィールドも可能な範囲で埋めてください。"
+
+    return prompt
 
 
 def _encode_image(image_path: str) -> tuple[str, str]:
@@ -115,13 +150,13 @@ def _validate_schema(result: dict) -> dict:
     after=after_log(logger, logging.ERROR),
     reraise=True,
 )
-def _call_api(client: anthropic.Anthropic, image_data: str, media_type: str) -> str:
+def _call_api(client: anthropic.Anthropic, image_data: str, media_type: str, system_prompt: str | None = None) -> str:
     """Claude Vision API を呼び出す（リトライ付き）。"""
     model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5")
     message = client.messages.create(
         model=model,
         max_tokens=1024,
-        system=SYSTEM_PROMPT,
+        system=system_prompt or BASE_SYSTEM_PROMPT,
         messages=[
             {
                 "role": "user",
@@ -145,13 +180,21 @@ def _call_api(client: anthropic.Anthropic, image_data: str, media_type: str) -> 
     return message.content[0].text
 
 
-def analyze_field_image(image_path: str, api_key: str | None = None) -> dict:
+class NotFarmlandError(Exception):
+    """写真が圃場ではないと判定された場合の例外。"""
+    def __init__(self, reason: str):
+        self.reason = reason
+        super().__init__(reason)
+
+
+def analyze_field_image(image_path: str, api_key: str | None = None, categories: list[str] | None = None) -> dict:
     """
     圃場写真を解析して土壌・植生情報を返す。
 
     Args:
         image_path: 解析する画像ファイルのパス（JPEG/PNG）
         api_key: Anthropic API キー（Noneの場合は環境変数から取得）
+        categories: 抽出するカテゴリのリスト（Noneの場合は全カテゴリ）
 
     Returns:
         構造化JSON（soil_type, soil_color, vegetation, abandonment_level,
@@ -159,6 +202,7 @@ def analyze_field_image(image_path: str, api_key: str | None = None) -> dict:
 
     Raises:
         FileNotFoundError: 画像ファイルが存在しない場合
+        NotFarmlandError: 写真が圃場ではないと判定された場合
         RuntimeError: API呼び出しが全リトライ失敗した場合
     """
     if not Path(image_path).exists():
@@ -170,12 +214,25 @@ def analyze_field_image(image_path: str, api_key: str | None = None) -> dict:
         raise RuntimeError("ANTHROPIC_API_KEY が設定されていません")
 
     client = anthropic.Anthropic(api_key=api_key)
+    system_prompt = _build_system_prompt(categories)
 
     try:
         image_data, media_type = _encode_image(image_path)
-        raw_text = _call_api(client, image_data, media_type)
+        raw_text = _call_api(client, image_data, media_type, system_prompt)
         result = _parse_json_response(raw_text)
+
+        # Check if the photo is a farmland
+        if result.get("is_farmland") is False:
+            reason = result.get("rejection_reason", "圃場の写真ではありません")
+            raise NotFarmlandError(reason)
+
+        # Remove the is_farmland flag before validation
+        result.pop("is_farmland", None)
+        result.pop("rejection_reason", None)
+
         return _validate_schema(result)
+    except NotFarmlandError:
+        raise
     except json.JSONDecodeError as e:
         logger.error("JSONパースエラー: %s", e)
         raise RuntimeError(f"APIレスポンスのJSONパースに失敗しました: {e}") from e

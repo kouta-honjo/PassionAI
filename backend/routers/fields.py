@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -23,7 +23,7 @@ from schemas.field import (
     AnalysisResponse,
     CropSuitabilityResponse,
 )
-from analyzer import analyze_field_image
+from analyzer import analyze_field_image, NotFarmlandError
 from scorer import score_crops, DEFAULT_MASTERS
 from export import generate_report
 
@@ -122,12 +122,21 @@ def create_field(field: FieldCreate, db: Session = Depends(get_db)):
 async def analyze_field(
     field_id: int,
     file: UploadFile = File(...),
+    categories: str | None = Form(None),
     db: Session = Depends(get_db),
 ):
     """画像をアップロードして圃場を解析する。"""
     field = db.query(Field).filter(Field.id == field_id).first()
     if not field:
         raise HTTPException(status_code=404, detail="圃場が見つかりません")
+
+    # Parse categories
+    cat_list = None
+    if categories:
+        try:
+            cat_list = json.loads(categories)
+        except json.JSONDecodeError:
+            pass
 
     # ファイル保存
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -144,7 +153,9 @@ async def analyze_field(
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY が設定されていません")
 
     try:
-        result = analyze_field_image(str(file_path), api_key)
+        result = analyze_field_image(str(file_path), api_key, categories=cat_list)
+    except NotFarmlandError as e:
+        raise HTTPException(status_code=422, detail=e.reason)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"画像解析に失敗しました: {e}")
 
