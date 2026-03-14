@@ -24,6 +24,15 @@ const RANKINGS: Record<string, string[]> = {
   '農業機械アクセス': ['困難', '可能'],
   '水分状態推定': ['過湿', '乾燥', '適湿'],
   '日照条件推定': ['不良', '普通', '良好'],
+  '土壌硬度推定': ['硬い', '普通', '柔らかい'],
+  '有機物量推定': ['少ない', '普通', '豊富'],
+  '風当たり推定': ['強い', '普通', '弱い'],
+  '霜害リスク': ['高い', '普通', '低い'],
+  '土壌侵食度': ['重度', '中度', '軽度', 'なし'],
+  '獣害リスク': ['高い', '普通', '低い'],
+  '水害リスク': ['高い', '普通', '低い'],
+  '整地必要度': ['大規模', '中規模', '軽微', '不要'],
+  '畦畔状態': ['崩壊', '一部崩壊', '良好'],
 };
 
 function classifyChange(key: string, prev: string, curr: string): 'improved' | 'worsened' | 'changed' {
@@ -88,8 +97,15 @@ export function computeAllDeltas(
     ['地形', previous.地形 as unknown as Record<string, unknown>, current.地形 as unknown as Record<string, unknown>],
     ['インフラ', previous.インフラ as unknown as Record<string, unknown>, current.インフラ as unknown as Record<string, unknown>],
     ['土壌表面', previous.土壌表面 as unknown as Record<string, unknown>, current.土壌表面 as unknown as Record<string, unknown>],
+    ['土壌構造', previous.土壌構造 as unknown as Record<string, unknown>, current.土壌構造 as unknown as Record<string, unknown>],
+    ['排水詳細', previous.排水詳細 as unknown as Record<string, unknown>, current.排水詳細 as unknown as Record<string, unknown>],
+    ['有機物', previous.有機物 as unknown as Record<string, unknown>, current.有機物 as unknown as Record<string, unknown>],
     ['土地利用履歴', previous.土地利用履歴 as unknown as Record<string, unknown>, current.土地利用履歴 as unknown as Record<string, unknown>],
+    ['雑草植生', previous.雑草植生 as unknown as Record<string, unknown>, current.雑草植生 as unknown as Record<string, unknown>],
     ['周辺環境', previous.周辺環境 as unknown as Record<string, unknown>, current.周辺環境 as unknown as Record<string, unknown>],
+    ['微気候', previous.微気候 as unknown as Record<string, unknown>, current.微気候 as unknown as Record<string, unknown>],
+    ['災害リスク', previous.災害リスク as unknown as Record<string, unknown>, current.災害リスク as unknown as Record<string, unknown>],
+    ['再生コスト', previous.再生コスト as unknown as Record<string, unknown>, current.再生コスト as unknown as Record<string, unknown>],
   ];
 
   for (const [label, prev, curr] of pairs) {

@@ -8,7 +8,11 @@ import CategorySelector from '@/components/CategorySelector';
 import { farmlandApi, DEMO_DATA } from '@/lib/api';
 import type { Farmland, AnalysisEntry } from '@/types/farmland';
 
-const ALL_CATEGORIES = ['地形', 'インフラ', '土壌表面', '土地利用履歴', '周辺環境', '適性作物推定'];
+const ALL_CATEGORIES = [
+  '地形', 'インフラ', '土壌表面', '土壌構造', '排水詳細', '有機物',
+  '土地利用履歴', '雑草植生', '周辺環境', '微気候', '災害リスク', '再生コスト',
+  '適性作物推定',
+];
 
 export default function AnalyzePage() {
   const router = useRouter();
@@ -364,8 +368,15 @@ function filterByCategories(
     地形: categories.includes('地形') ? data.地形 : undefined,
     インフラ: categories.includes('インフラ') ? data.インフラ : undefined,
     土壌表面: categories.includes('土壌表面') ? data.土壌表面 : undefined,
+    土壌構造: categories.includes('土壌構造') ? data.土壌構造 : undefined,
+    排水詳細: categories.includes('排水詳細') ? data.排水詳細 : undefined,
+    有機物: categories.includes('有機物') ? data.有機物 : undefined,
     土地利用履歴: categories.includes('土地利用履歴') ? data.土地利用履歴 : undefined,
+    雑草植生: categories.includes('雑草植生') ? data.雑草植生 : undefined,
     周辺環境: categories.includes('周辺環境') ? data.周辺環境 : undefined,
+    微気候: categories.includes('微気候') ? data.微気候 : undefined,
+    災害リスク: categories.includes('災害リスク') ? data.災害リスク : undefined,
+    再生コスト: categories.includes('再生コスト') ? data.再生コスト : undefined,
     適性作物推定: data.適性作物推定,
     注意点: data.注意点,
     信頼度: data.信頼度,

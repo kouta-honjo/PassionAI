@@ -63,12 +63,19 @@ def _build_system_prompt(categories: list[str] | None = None) -> str:
 
     # Map frontend category names to prompt field instructions
     category_fields = {
-        "地形": '"slope": "flat|gentle|moderate|steep のいずれか"',
-        "インフラ": '(インフラ情報はraw_descriptionに含めてください)',
-        "土壌表面": '"soil_type", "soil_color", "stones_present"',
-        "土地利用履歴": '"abandonment_level", "vegetation"',
-        "周辺環境": '(周辺環境情報はraw_descriptionに含めてください)',
-        "適性作物推定": '(栽培適性は別途スコアリングされます)',
+        "地形": "slope（傾斜）の詳細判定",
+        "インフラ": "道路アクセス・用排水路・電力・農業機械のアクセス性",
+        "土壌表面": "soil_type, soil_color, stones_present の詳細判定",
+        "土壌構造": "土壌の団粒構造・硬度・礫密度・粒度（砂質/粘土質/ローム/シルト）",
+        "排水詳細": "表面滞水・モットル（灰色斑紋）・クラスト・侵食痕（ガリー/リル）・暗渠排水の有無",
+        "有機物": "有機物量（土色の黒さから推定）・地表残渣・ミミズ穴等の生物活動痕",
+        "土地利用履歴": "abandonment_level, vegetation, 畝跡・資材残置",
+        "雑草植生": "優占雑草種の同定・被覆率%・草丈・樹木化の有無・指標植物（スギナ→酸性等）",
+        "周辺環境": "隣接建物・林地の近接・日照条件",
+        "微気候": "風当たり（樹木の傾き等）・防風林の有無・霜害リスク（谷地形+低標高）",
+        "災害リスク": "土壌侵食度・獣害リスク（獣道・フェンス）・水害リスク（河川距離・氾濫痕）",
+        "再生コスト": "除去必要物（倒木・瓦礫）・整地レベル・既存構造物（ハウス跡等）・畦畔の状態",
+        "適性作物推定": "(栽培適性は別途スコアリングされます)",
     }
 
     selected_info = []

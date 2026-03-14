@@ -61,8 +61,15 @@ function AnalysisContent({ data, prevData }: { data: AnalysisResult; prevData?: 
       {data.地形 && <Section label="地形" data={data.地形 as unknown as SectionData} />}
       {data.インフラ && <Section label="インフラ" data={data.インフラ as unknown as SectionData} />}
       {data.土壌表面 && <Section label="土壌表面" data={data.土壌表面 as unknown as SectionData} />}
+      {data.土壌構造 && <Section label="土壌構造・物理性" data={data.土壌構造 as unknown as SectionData} />}
+      {data.排水詳細 && <Section label="排水・水文" data={data.排水詳細 as unknown as SectionData} />}
+      {data.有機物 && <Section label="有機物・生物性" data={data.有機物 as unknown as SectionData} />}
       {data.土地利用履歴 && <Section label="土地利用履歴" data={data.土地利用履歴 as unknown as SectionData} />}
+      {data.雑草植生 && <Section label="雑草・植生" data={data.雑草植生 as unknown as SectionData} />}
       {data.周辺環境 && <Section label="周辺環境" data={data.周辺環境 as unknown as SectionData} />}
+      {data.微気候 && <Section label="微気候" data={data.微気候 as unknown as SectionData} />}
+      {data.災害リスク && <Section label="災害リスク" data={data.災害リスク as unknown as SectionData} />}
+      {data.再生コスト && <Section label="再生コスト" data={data.再生コスト as unknown as SectionData} />}
 
       {data.注意点 && (
         <div style={{
